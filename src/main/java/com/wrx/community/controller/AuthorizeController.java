@@ -3,6 +3,8 @@ package com.wrx.community.controller;
 
 import com.wrx.community.dto.AccessTokenDTO;
 import com.wrx.community.dto.GithubUser;
+import com.wrx.community.mapper.UserMapper;
+import com.wrx.community.model.User;
 import com.wrx.community.provider.GithubProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,11 +12,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.UUID;
+
 @Controller
 public class AuthorizeController {
 
     @Autowired
     private GithubProvider githubProvider;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @Value("${github.client.id}")
     private String clientId;
@@ -27,7 +36,8 @@ public class AuthorizeController {
 
     @GetMapping("/callback")
     public String callback(@RequestParam(name="code") String code,
-                           @RequestParam(name="state") String state) {
+                           @RequestParam(name="state") String state,
+                           HttpServletRequest req, HttpServletResponse resp) {
 
         AccessTokenDTO accessTokenDTO = new AccessTokenDTO();
         //设置参数
@@ -39,11 +49,26 @@ public class AuthorizeController {
 
         // 获取accessToken
         String accessToken = githubProvider.getAccessToken(accessTokenDTO);
-        GithubUser user = githubProvider.getUser(accessToken);
+        GithubUser githubUser = githubProvider.getUser(accessToken);
 
-        System.out.println(user);
+        if (githubUser != null){
+            // 当user不为空时表示登录成功
 
-        return "index";
+            User user = new User();
+            user.setToken(UUID.randomUUID().toString());
+            user.setName(githubUser.getName());
+            user.setAccountId(githubUser.getId().toString());
+            user.setGmtCreate(System.currentTimeMillis());
+            user.setGmtModified(user.getGmtCreate());
+            userMapper.insert(user);
+
+            req.getSession().setAttribute("user", githubUser);
+            return "redirect:/";
+
+        }else{
+            // 其他情况登录失败
+            return "redirect:/";
+        }
     }
 
 }
