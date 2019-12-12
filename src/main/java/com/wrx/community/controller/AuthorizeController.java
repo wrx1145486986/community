@@ -62,6 +62,7 @@ public class AuthorizeController {
             user.setAccountId(githubUser.getId().toString());
             user.setGmtCreate(System.currentTimeMillis());
             user.setGmtModified(user.getGmtCreate());
+            user.setBio(githubUser.getBio());
 
             // 将用户数据插入数据库中
             userMapper.insert(user);
