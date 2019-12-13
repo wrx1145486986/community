@@ -52,7 +52,7 @@ public class AuthorizeController {
         String accessToken = githubProvider.getAccessToken(accessTokenDTO);
         GithubUser githubUser = githubProvider.getUser(accessToken);
 
-        if (githubUser != null){
+        if (githubUser != null && githubUser.getId() != null){
             // 当user不为空时表示登录成功
 
             User user = new User();
@@ -63,6 +63,7 @@ public class AuthorizeController {
             user.setGmtCreate(System.currentTimeMillis());
             user.setGmtModified(user.getGmtCreate());
             user.setBio(githubUser.getBio());
+            user.setAvatarUrl(githubUser.getAvatarUrl());
 
             // 将用户数据插入数据库中
             userMapper.insert(user);

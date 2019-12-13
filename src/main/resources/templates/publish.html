@@ -13,13 +13,16 @@
         body{
             background-color: #efefef;
         }
+        body::-webkit-scrollbar{
+            display: none;
+        }
         /*内容 样式控制*/
         .pageContext{
-            margin: 30px 40px;
+            margin: 10px 40px;
             background-color: #ffffff;
         }
 
-        .fbbutton{
+        .fb-button{
             float: right;
             margin-bottom: 15px;
         }
@@ -35,7 +38,7 @@
                         data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
                     <span class="sr-only">我的社区</span>
                 </button>
-                <a class="navbar-brand" href="#">我的社区</a>
+                <a class="navbar-brand" href="/">我的社区</a>
             </div>
 
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -49,6 +52,10 @@
                 <!--    判定是否session中有 user 如果没有则显示 登录 -->
                     <li th:unless="${session.user != null}">
                         <a href="https://github.com/login/oauth/authorize?client_id=Iv1.a8840116dac3a540&redirect_uri=http://localhost/callback&scope=user&state=1">登录</a>
+                    </li>
+                    <!-- 判定session中是否存在user 如果存在则显示发布按钮-->
+                    <li th:if="${session.user != null}">
+                        <a href="/publish">发布</a>
                     </li>
                                         <!--          判定session中存在user    -->
                     <li class="dropdown" th:if="${session.user != null}">
@@ -69,25 +76,26 @@
         <div class="row pageContext">
             <!--                左边列-->
             <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
-                <h2> <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> 发起</h2>
+                <h3> <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> 发起</h3>
                 <hr>
-                <form action="">
+                <form action="/publish" method="post">
                     <div class="form-group">
                         <label for="tittle">问题标题（简单描述）:</label>
-                        <input type="text" class="form-control" id="tittle" name="tittle" placeholder="问题标题">
+                        <input type="text" class="form-control" id="tittle" name="tittle" placeholder="问题标题" th:value="${tittle}">
                     </div>
 
                     <div class="form-group">
                         <label for="tittle">问题补充（必填，请参照右侧提示）:</label>
-                        <textarea name="description" id="description" cols="30" rows="10" class="form-control"></textarea>
+                        <textarea name="description" id="description" cols="30" rows="8" class="form-control" th:text="${description}"></textarea>
                     </div>
 
                     <div class="form-group">
                         <label for="tittle">添加标签:</label>
-                        <input type="text" class="form-control" id="tag" name="tag" placeholder="添加标签 以“，”分隔">
+                        <input type="text" class="form-control" id="tag" name="tag" placeholder="添加标签 以“，”分隔" th:value="${tag}">
                     </div>
-
-                    <button type="submit" class="btn btn-success fbbutton">&nbsp;&nbsp;发布&nbsp;&nbsp;</button>
+                    <span class="alert alert-danger" role="alert" th:text="${errorMessage}" th:if="${errorMessage != null}"></span>
+                    <span class="alert alert-success" role="alert" th:text="${successMessage}" th:if="${successMessage != null}"></span>
+                    <button type="submit" class="btn btn-success fb-button">&nbsp;&nbsp;发布&nbsp;&nbsp;</button>
                 </form>
             </div>
             <!--                右边列-->
