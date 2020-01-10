@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 @SpringBootTest
 class CommunityApplicationTests {
 
@@ -15,9 +18,14 @@ class CommunityApplicationTests {
     @Test
     void contextLoads() {
 
-        User user = userMapper.findByToken("e531b6b0-9ee8-4feb-bb72-e1b7e465a236");
+        String str = "123456!";
 
-        System.out.println(user);
+        Pattern p = Pattern.compile("123");
+
+        Matcher matcher = p.matcher("str");
+
+        System.out.println(matcher.toString());
+
     }
 
 }

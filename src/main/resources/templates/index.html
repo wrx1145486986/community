@@ -26,8 +26,8 @@
 
         /* 更改头像大小样式 */
         .media-object{
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
         }
 
         .text-desc{
@@ -88,19 +88,25 @@
             <h3> <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> 发现</h3>
             <hr>
 
-            <div class="media">
+            <!-- 使用thymeleaf th：each 循环遍历questionDTOList-->
+            <div class="media" th:each="questionDTO : ${pageinationDTO.questions}">
+
                 <div class="media-left">
                     <a href="#">
-                        <img class="media-object img-rounded" src="" alt="头像" th:attr="src=${session.user.getAvatarUrl()}">
+                        <img class="media-object img-rounded" alt="头像" th:src="${questionDTO.user.getAvatarUrl()}">
                     </a>
                 </div>
                 <div class="media-body">
-                    <h4 class="media-heading">这里是标题部分</h4>
-                    <span class="text-desc">这里是内容描述部分 · 2个回复 · 31浏览 · 1小时前</span>
+                    <h4 class="media-heading" th:text="${questionDTO.tittle}"></h4>
+                    <span th:text="${questionDTO.description}"></span>
+                    <span class="text-desc">
+                         ~ <span th:text="${questionDTO.getCommentCount()}"></span> 个评论
+                         ~ <span th:text="${questionDTO.getViewCount()}"></span> 个观看
+                         ~ <span th:text="${#dates.format(questionDTO.getGmtCreate(),'yyyy-MM-dd HH:mm')}"></span>
+                    </span>
                 </div>
+                <hr>
             </div>
-            <hr>
-
         </div>
         <!--                右边列-->
         <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">

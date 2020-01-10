@@ -3,6 +3,7 @@ package com.wrx.community.mapper;
 import com.wrx.community.model.Question;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +21,11 @@ public interface QuestionMapper {
             "#{viewCount},#{likeCount},#{tag})")
     void insertQuestion(Question question);
 
-    @Select("select * from question")
-    List<Question> queryAllQuestion();
+//    分页查询 question
+    @Select("select * from question limit #{pageNum} , #{size}")
+    List<Question> queryQuestion(@Param(value = "pageNum") Integer pageNum, @Param(value = "size") Integer size);
+
+    @Select("select count (*) from question")
+    Integer count();
+
 }

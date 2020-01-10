@@ -17,8 +17,8 @@ public interface UserMapper {
     void insert(User user);
 
     // 根据数据库中的token 查找用户
-    @Select("select id id,name name, account_id accountId,token token,gmt_create gmtCreate," +
-            "gmt_modified gmtModified,bio bio from user where token = #{token}")
+    @Select("select id,name, account_id accountId,token,gmt_create gmtCreate," +
+            "gmt_modified gmtModified,bio,avatar_url avatarUrl from user where token = #{token}")
     User findByToken(@Param("token") String token);
 
     @Select("select * from user where id = #{id}")

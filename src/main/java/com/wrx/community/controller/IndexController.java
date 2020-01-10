@@ -1,14 +1,17 @@
 package com.wrx.community.controller;
 
 
+import com.wrx.community.dto.PageinationDTO;
 import com.wrx.community.dto.QuestionDTO;
 import com.wrx.community.mapper.UserMapper;
 import com.wrx.community.model.User;
 import com.wrx.community.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -26,7 +29,10 @@ public class IndexController {
 
 //  设置首页访问路径
     @GetMapping("/")
-    public String index(HttpServletRequest req, HttpServletResponse resp,Model model)throws Exception {
+    public String index(HttpServletRequest req, HttpServletResponse resp, Model model,
+                        @RequestParam(name = "pageNum",defaultValue = "1") Integer pageNum,
+                        @RequestParam(name = "size" , defaultValue = "5") Integer size
+    )throws Exception {
 
         Cookie[] cookies = req.getCookies();
         if (cookies != null) {
@@ -46,9 +52,9 @@ public class IndexController {
             }
 
             // 将结果查询出来使用 model 将各个参数值传递到前端页面
-            List<QuestionDTO> questionDTOList = questionService.queryAllQuestion();
+            PageinationDTO pageinationDTO= questionService.queryQuestion(pageNum,size);
             // 回传前端页面
-            model.addAttribute("questionDTOList",questionDTOList);
+            model.addAttribute("pageinationDTO",pageinationDTO);
 
             return "index";
         }
