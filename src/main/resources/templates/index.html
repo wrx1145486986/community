@@ -92,14 +92,8 @@
             <div class="media" th:each="questionDTO : ${pageinationDTO.questions}">
 
                 <div class="media-left">
-<<<<<<< HEAD
                     <a href="#">
                         <img class="media-object img-rounded" alt="头像" th:src="${questionDTO.user.getAvatarUrl()}">
-=======
-                    <a href="#" th:if="${session.user != null}">
-                        <img class="media-object img-rounded" src="" alt="头像" th:attr="src=${session.user.getAvatarUrl()}">
->>>>>>> c11e628cb505f7cd1704373f4490bb02930bda0d
-                    </a>
                 </div>
                 <div class="media-body">
                     <h4 class="media-heading" th:text="${questionDTO.tittle}"></h4>
