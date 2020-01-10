@@ -90,7 +90,7 @@
 
             <div class="media">
                 <div class="media-left">
-                    <a href="#">
+                    <a href="#" th:if="${session.user != null}">
                         <img class="media-object img-rounded" src="" alt="头像" th:attr="src=${session.user.getAvatarUrl()}">
                     </a>
                 </div>
