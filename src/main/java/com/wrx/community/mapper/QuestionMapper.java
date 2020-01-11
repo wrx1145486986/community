@@ -25,7 +25,8 @@ public interface QuestionMapper {
     @Select("select * from question limit #{pageNum} , #{size}")
     List<Question> queryQuestion(@Param(value = "pageNum") Integer pageNum, @Param(value = "size") Integer size);
 
-    @Select("select count (*) from question")
+//    查询问题个数
+    @Select("select count(*) from question")
     Integer count();
 
 }

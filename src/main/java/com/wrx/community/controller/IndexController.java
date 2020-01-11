@@ -58,7 +58,14 @@ public class IndexController {
 
             return "index";
         }
-        
+
+//        要注意以下代码 在与校园云课堂整合的时候 应该注意
+
+        // 将结果查询出来使用 model 将各个参数值传递到前端页面
+        PageinationDTO pageinationDTO= questionService.queryQuestion(pageNum,size);
+        // 回传前端页面
+        model.addAttribute("pageinationDTO",pageinationDTO);
+
         return "index";
     }
 }

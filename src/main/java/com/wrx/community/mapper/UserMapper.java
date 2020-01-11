@@ -21,7 +21,11 @@ public interface UserMapper {
             "gmt_modified gmtModified,bio,avatar_url avatarUrl from user where token = #{token}")
     User findByToken(@Param("token") String token);
 
+    // 根据 id 查找用户
     @Select("select * from user where id = #{id}")
     User queryById(@Param("id") Integer id);
+
+    @Select("select * from user where account_id = #{account_id}")
+    User queryByAccountId(@Param("account_id") String accountId);
 
 }
