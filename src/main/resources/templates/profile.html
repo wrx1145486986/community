@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>我的社区</title>
+    <title th:text="${sectionName}"></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 
     <!-- 新 Bootstrap 核心 CSS 文件 -->
@@ -42,6 +42,11 @@
             text-align: center;
         }
 
+        /* 给定右边栏一个 上边距*/
+        .list-group {
+            margin-top: 20px;
+        }
+
     </style>
 
 </head>
@@ -53,10 +58,10 @@
     <div class="row pageContext">
         <!--                左边列-->
         <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
-            <h3><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> 发现</h3>
+            <h3><span th:text="${sectionName}"></span></h3>
             <hr>
 
-            <!-- 使用thymeleaf th：each 循环遍历questionDTOList-->
+            <!--             使用thymeleaf th：each 循环遍历questionDTOList-->
             <div th:if="${pageinationDTO != null}">
                 <div class="media" th:each="questionDTO : ${pageinationDTO.questions}">
 
@@ -67,7 +72,6 @@
                     </div>
                     <div class="media-body">
                         <h4 class="media-heading" th:text="${questionDTO.tittle}"></h4>
-                        <span th:text="${questionDTO.description}"></span>
                         <span class="text-desc">
                              ~ <span th:text="${questionDTO.getCommentCount()}"></span> 个评论
                              ~ <span th:text="${questionDTO.getViewCount()}"></span> 个观看
@@ -77,33 +81,34 @@
                     <hr>
                 </div>
 
-                <!--                bootstrap 分页功能  start-->
+                <!-- bootstrap 分页功能  start-->
                 <nav aria-label="Page navigation" id="pagination">
                     <ul class="pagination">
-<!--                        上一页 首页-->
+                        <!--                        上一页 首页-->
                         <li th:if="${pageinationDTO.showFirstPage}">
-                            <a href="/?pageNum=1" aria-label="Previous">
+                            <a th:href="@{'/profile/'+${section}(page=${1})}"
+                                    aria-label="Previous">
                                 <span aria-hidden="true">&lt;&lt;</span>
                             </a>
                         </li>
                         <li th:if="${pageinationDTO.showPrevious}">
-                            <a th:href="@{/(pageNum=${pageinationDTO.getPage()-1})}" aria-label="Previous">
+                            <a th:href="@{'/profile/'+${section}(pageNum=${pageinationDTO.getPage()-1})}" aria-label="Previous">
                                 <span aria-hidden="true">&lt;</span>
                             </a>
                         </li>
-<!--                        中间页码-->
+                        <!--                        中间页码-->
                         <li th:each="page:${pageinationDTO.getPages()}"
                             th:class="${pageinationDTO.page == page}?'active':''">
-                            <a th:href="@{/(pageNum=${page})}" th:text="${page}"></a>
+                            <a th:href="@{'/profile/'+${section}(pageNum=${page})}" th:text="${page}"></a>
                         </li>
-<!--                        下一页 尾页 -->
+                        <!--                        下一页 尾页 -->
                         <li th:if="${pageinationDTO.showNext}">
-                            <a th:href="@{/(pageNum=${pageinationDTO.getPage()+1})}" aria-label="Previous">
+                            <a th:href="@{'/profile/'+${section}(pageNum=${pageinationDTO.getPage()+1})}" aria-label="Previous">
                                 <span aria-hidden="true">&gt;</span>
                             </a>
                         </li>
                         <li th:if="${pageinationDTO.showEndPage}">
-                            <a th:href="@{/(pageNum=${pageinationDTO.getTotalPage()})}" aria-label="Previous">
+                            <a th:href="@{'/profile/'+${section}(pageNum=${pageinationDTO.getTotalPage()})} " aria-label="Previous">
                                 <span aria-hidden="true">&gt;&gt;</span>
                             </a>
                         </li>
@@ -116,17 +121,20 @@
         <!--                右边列-->
         <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
 
-            <h3>热门话题</h3>
-            <p>·问题标题：</p>
-            <p>&nbsp; &nbsp;请用精简的语言描述您所发布的问题，不超过25个字</p>
-            <p>·问题补充：</p>
-            <p>&nbsp; &nbsp;补充您的问题内容并确保问题描述清晰直观，最好提供一些资料</p>
-            <p>·选择标签：</p>
-            <p>&nbsp; &nbsp;选择一个或多个合适的标签，采用“ ，”隔开，不要超过10个字</p>
+            <div class="list-group">
+                <a href="/profile/question"
+                   th:class="${section == 'question'}?'list-group-item active':'list-group-item'">我的问题</a>
+                <a href="/profile/replies"
+                   th:class="${section == 'replies'}?'list-group-item active':'list-group-item'">最新回复</a>
+                <!--                <a href="#" th:class="${section == 'question'}?'list-group-item active':'list-group-item'">Morbi leo risus</a>-->
+                <!--                <a href="#" th:class="${section == 'question'}?'list-group-item active':'list-group-item'">Porta ac consectetur ac</a>-->
+                <!--                <a href="#" th:class="${section == 'question'}?'list-group-item active':'list-group-item'">Vestibulum at eros</a>-->
+            </div>
+
         </div>
+
     </div>
 </div>
-
 </body>
 
 <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
