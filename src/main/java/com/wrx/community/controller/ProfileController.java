@@ -1,7 +1,6 @@
 package com.wrx.community.controller;
 
 import com.wrx.community.dto.PageinationDTO;
-import com.wrx.community.mapper.UserMapper;
 import com.wrx.community.model.User;
 import com.wrx.community.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,14 +10,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class ProfileController {
-
-    @Autowired
-    private UserMapper userMapper;
 
     @Autowired
     private QuestionService questionService;
@@ -29,27 +24,11 @@ public class ProfileController {
                           @RequestParam(name = "pageNum", defaultValue = "1") Integer pageNum,
                           @RequestParam(name = "size", defaultValue = "5") Integer size) {
 
-        User user = null;
-        Cookie[] cookies = req.getCookies();
-        if (cookies != null && cookies.length != 0) {
-            for (Cookie cookie : cookies) {
-                // 查询cookie 中是否存在 token字段
-                if (cookie.getName() != "" && cookie.getName().equals("token")) {
-                    // 获取token中的信息
-                    String token = cookie.getValue();
-                    // 查库
-                    user = userMapper.findByToken(token);
-
-                    if (user != null) {
-                        req.getSession().setAttribute("user", user);
-                    }
-                    break;
-                }
-            }
-        }
+//        获取拦截器存储在Session中的user数据
+        User user = (User) req.getSession().getAttribute("user");
 
 //        如果用户没有登录 则会跳转至登录界面
-        if (user == null){
+        if (user == null) {
             return "redirect:/";
         }
 
@@ -66,7 +45,7 @@ public class ProfileController {
 
         PageinationDTO pageinationDTO = questionService.list(user.getId(), pageNum, size);
 
-        model.addAttribute("pageinationDTO",pageinationDTO);
+        model.addAttribute("pageinationDTO", pageinationDTO);
 
 
         return "profile";
