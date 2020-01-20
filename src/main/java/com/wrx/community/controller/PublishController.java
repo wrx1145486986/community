@@ -1,13 +1,15 @@
 package com.wrx.community.controller;
 
 
-import com.wrx.community.mapper.QuestionMapper;
+import com.wrx.community.dto.QuestionDTO;
 import com.wrx.community.model.Question;
 import com.wrx.community.model.User;
+import com.wrx.community.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -17,7 +19,20 @@ import javax.servlet.http.HttpServletRequest;
 public class PublishController {
 
     @Autowired
-    private QuestionMapper questionMapper;
+    private QuestionService questionService;
+
+    // 处理 编辑 请求
+    @GetMapping("/publish/{id}")
+    public String edit(@PathVariable(name = "id") Integer id, Model model){
+
+        QuestionDTO question = questionService.queryById(id);
+        model.addAttribute("tittle",question.getTittle());
+        model.addAttribute("description",question.getDescription());
+        model.addAttribute("tag",question.getTag());
+        model.addAttribute("id",question.getId());
+
+        return "publish";
+    }
 
     // 处理get请求
     @GetMapping("/publish")
@@ -28,9 +43,10 @@ public class PublishController {
     // 处理get请求
     @PostMapping("/publish")
     public String insertQuestion(
-            @RequestParam("tittle") String tittle,
-            @RequestParam("description") String description,
-            @RequestParam("tag") String tag,
+            @RequestParam(value = "tittle",required = false) String tittle,
+            @RequestParam(value = "description",required = false) String description,
+            @RequestParam(value = "tag",required = false) String tag,
+            @RequestParam(value = "id",required = false) Integer id,
             HttpServletRequest req,
             Model model
     ) {
@@ -64,13 +80,16 @@ public class PublishController {
             question.setTittle(tittle);
             question.setDescription(description);
             question.setTag(tag);
-            question.setGmtCreate(System.currentTimeMillis());
-            question.setGmtModified(question.getGmtCreate());
             question.setCreater(user.getId());
+            question.setId(id);
 
-            questionMapper.insertQuestion(question);
-
-            model.addAttribute("successMessage", "发布成功！");
+            // questionService 判定是修改的 还是新增的 问题
+            questionService.createOrUpdat(question);
+            if (id != null){
+                model.addAttribute("successMessage", "修改成功！");
+            }else{
+                model.addAttribute("successMessage", "发布成功！");
+            }
 
             return "publish";
 

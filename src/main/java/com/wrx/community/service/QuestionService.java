@@ -144,4 +144,24 @@ public class QuestionService {
         return questionDTO;
 
     }
+
+    //判定 创建问题 还是修改问题
+    public void createOrUpdat(Question question) {
+
+        if (question.getId() == null){
+            // 如若 id为空 则为 第一次创建
+            question.setGmtCreate(System.currentTimeMillis());
+            question.setGmtModified(question.getGmtCreate());
+
+            questionMapper.insertQuestion(question);
+        }else {
+            //否则 为修改
+            question.setGmtModified(question.getGmtCreate());
+
+            questionMapper.update(question);
+
+        }
+
+
+    }
 }

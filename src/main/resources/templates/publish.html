@@ -40,6 +40,7 @@
                 <h3> <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> 发起</h3>
                 <hr>
                 <form action="/publish" method="post">
+                    <input type="hidden" name="id" th:value="${id}"  />
                     <div class="form-group">
                         <label for="tittle">问题标题（简单描述）:</label>
                         <input type="text" class="form-control" id="tittle" name="tittle" placeholder="问题标题" th:value="${tittle}">
