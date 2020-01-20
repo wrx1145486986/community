@@ -71,7 +71,9 @@
                         </a>
                     </div>
                     <div class="media-body">
-                        <h4 class="media-heading" th:text="${questionDTO.tittle}"></h4>
+                        <a th:href="@{'/question/'+${questionDTO.id}}">
+                            <h4 class="media-heading" th:text="${questionDTO.tittle}"></h4>
+                        </a>
                         <span class="text-desc">
                              ~ <span th:text="${questionDTO.getCommentCount()}"></span> 个评论
                              ~ <span th:text="${questionDTO.getViewCount()}"></span> 个观看
@@ -87,12 +89,13 @@
                         <!--                        上一页 首页-->
                         <li th:if="${pageinationDTO.showFirstPage}">
                             <a th:href="@{'/profile/'+${section}(page=${1})}"
-                                    aria-label="Previous">
+                               aria-label="Previous">
                                 <span aria-hidden="true">&lt;&lt;</span>
                             </a>
                         </li>
                         <li th:if="${pageinationDTO.showPrevious}">
-                            <a th:href="@{'/profile/'+${section}(pageNum=${pageinationDTO.getPage()-1})}" aria-label="Previous">
+                            <a th:href="@{'/profile/'+${section}(pageNum=${pageinationDTO.getPage()-1})}"
+                               aria-label="Previous">
                                 <span aria-hidden="true">&lt;</span>
                             </a>
                         </li>
@@ -103,12 +106,14 @@
                         </li>
                         <!--                        下一页 尾页 -->
                         <li th:if="${pageinationDTO.showNext}">
-                            <a th:href="@{'/profile/'+${section}(pageNum=${pageinationDTO.getPage()+1})}" aria-label="Previous">
+                            <a th:href="@{'/profile/'+${section}(pageNum=${pageinationDTO.getPage()+1})}"
+                               aria-label="Previous">
                                 <span aria-hidden="true">&gt;</span>
                             </a>
                         </li>
                         <li th:if="${pageinationDTO.showEndPage}">
-                            <a th:href="@{'/profile/'+${section}(pageNum=${pageinationDTO.getTotalPage()})} " aria-label="Previous">
+                            <a th:href="@{'/profile/'+${section}(pageNum=${pageinationDTO.getTotalPage()})} "
+                               aria-label="Previous">
                                 <span aria-hidden="true">&gt;&gt;</span>
                             </a>
                         </li>

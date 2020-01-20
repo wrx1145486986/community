@@ -130,4 +130,18 @@ public class QuestionService {
         return pageinationDTO;
 
     }
+
+//    根据id查询问题
+    public QuestionDTO queryById(Integer id) {
+
+        Question question = questionMapper.queryById(id);
+        QuestionDTO questionDTO = new QuestionDTO();
+        BeanUtils.copyProperties(question,questionDTO);
+
+        User user = userMapper.queryById(question.getCreater());
+        questionDTO.setUser(user);
+
+        return questionDTO;
+
+    }
 }

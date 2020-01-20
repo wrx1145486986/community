@@ -1,6 +1,5 @@
 package com.wrx.community.mapper;
 
-import com.wrx.community.dto.QuestionDTO;
 import com.wrx.community.model.Question;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -37,5 +36,5 @@ public interface QuestionMapper {
     Integer countByUserId(@Param(value = "userId") Integer userId);
 
     @Select("select * from question where id = #{id}")
-    QuestionDTO queryById(Integer id);
+    Question queryById(@Param(value = "id") Integer id);
 }

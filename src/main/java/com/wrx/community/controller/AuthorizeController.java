@@ -6,6 +6,7 @@ import com.wrx.community.dto.GithubUser;
 import com.wrx.community.mapper.UserMapper;
 import com.wrx.community.model.User;
 import com.wrx.community.provider.GithubProvider;
+import com.wrx.community.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -26,6 +27,9 @@ public class AuthorizeController {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private UserService userService;
+
     @Value("${github.client.id}")
     private String clientId;
 
@@ -36,8 +40,8 @@ public class AuthorizeController {
     private String redirectUri;
 
     @GetMapping("/callback")
-    public String callback(@RequestParam(name="code") String code,
-                           @RequestParam(name="state") String state,
+    public String callback(@RequestParam(name = "code") String code,
+                           @RequestParam(name = "state") String state,
                            HttpServletRequest req, HttpServletResponse resp) {
 
         AccessTokenDTO accessTokenDTO = new AccessTokenDTO();
@@ -52,49 +56,39 @@ public class AuthorizeController {
         String accessToken = githubProvider.getAccessToken(accessTokenDTO);
         GithubUser githubUser = githubProvider.getUser(accessToken);
 
-        if (githubUser != null && githubUser.getId() != null){
+        if (githubUser != null && githubUser.getId() != null) {
             // 当user不为空时表示登录成功
 
 //            查询数据库中 没有这个人员时 进行 进行新增操作
             User queryUser = userMapper.queryByAccountId(githubUser.getId().toString());
 
-//            如果人员不为空的情况
-            if (queryUser != null){
-
-                // 写入cookie 呵session
-                Cookie cookie = new Cookie("token", queryUser.getToken());
-                resp.addCookie(cookie);
-
-                req.getSession().setAttribute("user", githubUser);
-                return "redirect:/";
-            }
-
-//            人员为空时 执行以下代码
-            User user = new User();
-
             String token = UUID.randomUUID().toString();
-            user.setToken(token);
-            user.setName(githubUser.getName());
-            user.setAccountId(githubUser.getId().toString());
-            user.setGmtCreate(System.currentTimeMillis());
-            user.setGmtModified(user.getGmtCreate());
-            user.setBio(githubUser.getBio());
-            user.setAvatarUrl(githubUser.getAvatarUrl());
+            queryUser.setToken(token);
 
-            // 将用户数据插入数据库中
-            userMapper.insert(user);
+            userService.createOrUpdate(queryUser);
 
-            // 写入cookie 呵session
-            Cookie cookie = new Cookie("token", token);
+            Cookie cookie = new Cookie("token", queryUser.getToken());
             resp.addCookie(cookie);
 
             req.getSession().setAttribute("user", githubUser);
-            return "redirect:/";
 
-        }else{
-            // 其他情况登录失败
-            return "redirect:/";
         }
+        return "redirect:/";
+    }
+
+
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest req,HttpServletResponse resp){
+
+//      清除 session
+        req.getSession().removeAttribute("user");
+//      清除 cookie
+        Cookie cookie = new Cookie("token","null");
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        resp.addCookie(cookie);
+
+        return "redirect:/";
     }
 
 }

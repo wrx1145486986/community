@@ -28,4 +28,6 @@ public interface UserMapper {
     @Select("select * from user where account_id = #{account_id}")
     User queryByAccountId(@Param("account_id") String accountId);
 
+    @Insert("update user set name = #{name}, token = #{token}, gmt_modified = #{gmtModified}, bio = #{bio}, avatar_url = #{avatarUrl} where id = #{id}")
+    void update(User dbUser);
 }
