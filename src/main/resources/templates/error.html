@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>我的社区</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <!-- 新 Bootstrap 核心 CSS 文件 -->
+    <link href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+    <!--    页面样式部分-->
+    <style>
+        /* body 样式控制*/
+        body {
+            background-color: #efefef;
+        }
+
+        /* 隐藏body滚动条 */
+        body::-webkit-scrollbar {
+            display: none;
+        }
+
+        /*内容 样式控制*/
+        .pageContext {
+            margin: 10px 40px;
+            background-color: #ffffff;
+        }
+
+        /* 更改头像大小样式 */
+        .media-object {
+            width: 50px;
+            height: 50px;
+        }
+
+        .text-desc {
+            font-size: 12px;
+            font-weight: normal;
+            color: #999999;
+        }
+
+        /*    设置分页居中显示*/
+        #pagination {
+            text-align: center;
+        }
+
+        .jumbotron{
+            margin-left: 50px;
+        }
+
+    </style>
+
+</head>
+<body>
+<!--引入页面头部-->
+<div th:insert="navigation :: nav"></div>
+
+<!--<div class="container-fluid">-->
+<!--    <div class="row pageContext">-->
+<!--        &lt;!&ndash;                左边列&ndash;&gt;-->
+<!--        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">-->
+
+<!--            -->
+
+<!--        </div>-->
+
+<!--    </div>-->
+<!--</div>-->
+
+    <div class="jumbotron">
+        <h1>Hello, world!</h1>
+        <p th:text="${message}">服务器繁忙请稍后重试</p>
+        <p><a class="btn btn-primary btn-lg" href="/" role="button">回到首页</a></p>
+    </div>
+
+</body>
+
+<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+</html>

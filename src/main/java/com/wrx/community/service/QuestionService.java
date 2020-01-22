@@ -2,6 +2,8 @@ package com.wrx.community.service;
 
 import com.wrx.community.dto.PageinationDTO;
 import com.wrx.community.dto.QuestionDTO;
+import com.wrx.community.exception.CustomizeErrorCode;
+import com.wrx.community.exception.CustomizeException;
 import com.wrx.community.mapper.QuestionMapper;
 import com.wrx.community.mapper.UserMapper;
 import com.wrx.community.model.Question;
@@ -33,7 +35,7 @@ public class QuestionService {
 
         Integer totalPage;
 
-        Integer totalCount = (int)questionMapper.countByExample(new QuestionExample());
+        Integer totalCount = (int) questionMapper.countByExample(new QuestionExample());
 
         if (totalCount % size == 0) {
             totalPage = totalCount / size;
@@ -49,7 +51,7 @@ public class QuestionService {
             page = totalPage;
         }
 
-        pageinationDTO.setPageination(totalPage,page);
+        pageinationDTO.setPageination(totalPage, page);
 
         Integer pageNum = (page - 1) * size;
 
@@ -88,7 +90,7 @@ public class QuestionService {
 
         QuestionExample example = new QuestionExample();
         example.createCriteria().andCreaterEqualTo(userId);
-        Integer totalCount = (int)questionMapper.countByExample(example);
+        Integer totalCount = (int) questionMapper.countByExample(example);
 
         if (totalCount % size == 0) {
             totalPage = totalCount / size;
@@ -137,13 +139,17 @@ public class QuestionService {
 
     }
 
-//    根据id查询问题
+    //    根据id查询问题
     public QuestionDTO queryById(Integer id) {
 
         Question question = questionMapper.selectByPrimaryKey(id);
 
+        if (question == null) {
+            throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+        }
+
         QuestionDTO questionDTO = new QuestionDTO();
-        BeanUtils.copyProperties(question,questionDTO);
+        BeanUtils.copyProperties(question, questionDTO);
 
         User user = userMapper.selectByPrimaryKey(question.getCreater());
         questionDTO.setUser(user);
@@ -155,13 +161,13 @@ public class QuestionService {
     //判定 创建问题 还是修改问题
     public void createOrUpdat(Question question) {
 
-        if (question.getId() == null){
+        if (question.getId() == null) {
             // 如若 id为空 则为 第一次创建
             question.setGmtCreate(System.currentTimeMillis());
             question.setGmtModified(question.getGmtCreate());
 
             questionMapper.insert(question);
-        }else {
+        } else {
             //否则 为修改
 
             Question updateQuestion = new Question();
@@ -171,8 +177,10 @@ public class QuestionService {
             updateQuestion.setTag(question.getTag());
             QuestionExample example = new QuestionExample();
             example.createCriteria().andIdEqualTo(question.getId());
-            questionMapper.updateByExampleSelective(updateQuestion, example);
-
+            int updated = questionMapper.updateByExampleSelective(updateQuestion, example);
+            if (updated != 1){
+                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_UPDATE);
+            }
         }
 
 
