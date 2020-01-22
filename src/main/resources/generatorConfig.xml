@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+
+    <context id="DB2Tables" targetRuntime="MyBatis3">
+
+        <plugin type="org.mybatis.generator.plugins.RowBoundsPlugin"></plugin>
+
+        <!--        设置连接属性-->
+        <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
+                        connectionURL="jdbc:mysql://119.3.229.159/mycommunity"
+                        userId="root"
+                        password="sbqddm74108520.">
+            <property name="sun.reflect.UTF8" value="true"/>
+            <property name="nullCatalogMeansCurrent" value="true"/>
+            <property name="useSSL" value="false"/>
+        </jdbcConnection>
+
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+
+        <!--        设置映射生成路径-->
+        <javaModelGenerator targetPackage="com.wrx.community.model" targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+            <!--            格式化 文本  自动去空格-->
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+        <!--        sql mapper 映射文件生成位置-->
+        <sqlMapGenerator targetPackage="mapper" targetProject="src/main/resources">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+
+        <!--        java 客户端生成器-->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.wrx.community.mapper" targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+
+        <!--        迁移 user    start-->
+        <table schema="mycommunity" tableName="user" domainObjectName="User">
+            <!--            是否使用真实的列明称   默认为 false-->
+            <property name="useActualColumnNames" value="false"/>
+
+        </table>
+        <!--        迁移 user    end-->
+
+        <!--        迁移 question    start-->
+        <table schema="mycommunity" tableName="question" domainObjectName="Question">
+            <property name="useActualColumnNames" value="false"/>
+        </table>
+        <!--        迁移 question    end-->
+
+
+    </context>
+</generatorConfiguration>

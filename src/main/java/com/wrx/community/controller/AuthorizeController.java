@@ -5,6 +5,7 @@ import com.wrx.community.dto.AccessTokenDTO;
 import com.wrx.community.dto.GithubUser;
 import com.wrx.community.mapper.UserMapper;
 import com.wrx.community.model.User;
+import com.wrx.community.model.UserExample;
 import com.wrx.community.provider.GithubProvider;
 import com.wrx.community.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -60,7 +62,11 @@ public class AuthorizeController {
             // 当user不为空时表示登录成功
 
 //            查询数据库中 没有这个人员时 进行 进行新增操作
-            User queryUser = userMapper.queryByAccountId(githubUser.getId().toString());
+
+            UserExample example = new UserExample();
+            example.createCriteria().andAccountIdEqualTo(githubUser.getId().toString());
+            List<User> users = userMapper.selectByExample(example);
+            User queryUser = (User) users.get(0);
 
             String token = UUID.randomUUID().toString();
             queryUser.setToken(token);

@@ -5,7 +5,9 @@ import com.wrx.community.dto.QuestionDTO;
 import com.wrx.community.mapper.QuestionMapper;
 import com.wrx.community.mapper.UserMapper;
 import com.wrx.community.model.Question;
+import com.wrx.community.model.QuestionExample;
 import com.wrx.community.model.User;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,7 +33,7 @@ public class QuestionService {
 
         Integer totalPage;
 
-        Integer totalCount = questionMapper.count();
+        Integer totalCount = (int)questionMapper.countByExample(new QuestionExample());
 
         if (totalCount % size == 0) {
             totalPage = totalCount / size;
@@ -52,13 +54,13 @@ public class QuestionService {
         Integer pageNum = (page - 1) * size;
 
 //        查询问题
-        List<Question> questionList = questionMapper.queryQuestion(pageNum, size);
+        List<Question> questionList = questionMapper.selectByExampleWithRowbounds(new QuestionExample(), new RowBounds(pageNum, size));
 
         List<QuestionDTO> questionDTOList = new ArrayList<>();
 
         for (Question question : questionList) {
 //          根据question中的Creatyer 查找user表中的符合这个数据的id
-            User user = userMapper.queryById(question.getCreater());
+            User user = userMapper.selectByPrimaryKey(question.getCreater());
 
             QuestionDTO qdto = new QuestionDTO();
 //          Spring 中的工具类  将question对象中的所有属性 copy 到 qdto 对象中去
@@ -84,7 +86,9 @@ public class QuestionService {
 
         Integer totalPage;
 
-        Integer totalCount = questionMapper.countByUserId(userId);
+        QuestionExample example = new QuestionExample();
+        example.createCriteria().andCreaterEqualTo(userId);
+        Integer totalCount = (int)questionMapper.countByExample(example);
 
         if (totalCount % size == 0) {
             totalPage = totalCount / size;
@@ -105,13 +109,15 @@ public class QuestionService {
         Integer pageNum = (page - 1) * size;
 
 //        查询问题
-        List<Question> questionList = questionMapper.queryQuestionByUserId(userId, pageNum, size);
+        QuestionExample questionExample = new QuestionExample();
+        questionExample.createCriteria().andCreaterEqualTo(userId);
+        List<Question> questionList = questionMapper.selectByExampleWithRowbounds(questionExample, new RowBounds(pageNum, size));
 
         List<QuestionDTO> questionDTOList = new ArrayList<>();
 
         for (Question question : questionList) {
 //          根据question中的Creatyer 查找user表中的符合这个数据的id
-            User user = userMapper.queryById(question.getCreater());
+            User user = userMapper.selectByPrimaryKey(question.getCreater());
 
             QuestionDTO qdto = new QuestionDTO();
 //          Spring 中的工具类  将question对象中的所有属性 copy 到 qdto 对象中去
@@ -134,11 +140,12 @@ public class QuestionService {
 //    根据id查询问题
     public QuestionDTO queryById(Integer id) {
 
-        Question question = questionMapper.queryById(id);
+        Question question = questionMapper.selectByPrimaryKey(id);
+
         QuestionDTO questionDTO = new QuestionDTO();
         BeanUtils.copyProperties(question,questionDTO);
 
-        User user = userMapper.queryById(question.getCreater());
+        User user = userMapper.selectByPrimaryKey(question.getCreater());
         questionDTO.setUser(user);
 
         return questionDTO;
@@ -153,12 +160,18 @@ public class QuestionService {
             question.setGmtCreate(System.currentTimeMillis());
             question.setGmtModified(question.getGmtCreate());
 
-            questionMapper.insertQuestion(question);
+            questionMapper.insert(question);
         }else {
             //否则 为修改
-            question.setGmtModified(question.getGmtCreate());
 
-            questionMapper.update(question);
+            Question updateQuestion = new Question();
+            updateQuestion.setGmtModified(System.currentTimeMillis());
+            updateQuestion.setTittle(question.getTittle());
+            updateQuestion.setDescription(question.getDescription());
+            updateQuestion.setTag(question.getTag());
+            QuestionExample example = new QuestionExample();
+            example.createCriteria().andIdEqualTo(question.getId());
+            questionMapper.updateByExampleSelective(updateQuestion, example);
 
         }
 
