@@ -4,6 +4,7 @@ import com.wrx.community.dto.PageinationDTO;
 import com.wrx.community.dto.QuestionDTO;
 import com.wrx.community.exception.CustomizeErrorCode;
 import com.wrx.community.exception.CustomizeException;
+import com.wrx.community.mapper.QuestionExtMapper;
 import com.wrx.community.mapper.QuestionMapper;
 import com.wrx.community.mapper.UserMapper;
 import com.wrx.community.model.Question;
@@ -25,6 +26,8 @@ public class QuestionService {
 
     @Autowired
     private QuestionMapper questionMapper;
+
+    private QuestionExtMapper questionExtMapper;
 
 
     // 将question中的数据 与 user 中的数据整合到一块 page 默认为 1    size 默认为 5
@@ -178,11 +181,19 @@ public class QuestionService {
             QuestionExample example = new QuestionExample();
             example.createCriteria().andIdEqualTo(question.getId());
             int updated = questionMapper.updateByExampleSelective(updateQuestion, example);
-            if (updated != 1){
+            if (updated != 1) {
                 throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_UPDATE);
             }
         }
 
+
+    }
+
+    public void incView(Integer id) {
+        Question updateQuestion = new Question();
+        updateQuestion.setId(id);
+        updateQuestion.setViewCount(1);
+        questionExtMapper.incView(updateQuestion);
 
     }
 }
